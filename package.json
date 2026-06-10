@@ -1,0 +1,10 @@
+{
+  "name": "vyapar-ai",
+  "version": "1.0.0",
+  "description": "Vyapar AI - Indian Market Business Advisor Hub",
+  "scripts": {
+    "vercel-build": "cd client && npm install && npm run build",
+    "dev": "cd server && npm run dev",
+    "start": "cd server && node index.js"
+  }
+}

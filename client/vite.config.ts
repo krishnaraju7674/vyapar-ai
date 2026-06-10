@@ -12,7 +12,6 @@ export default defineConfig({
   },
   server: {
     port: 5180,
-    strictPort: true,
     proxy: {
       '/api': { target: 'http://localhost:5000', changeOrigin: true },
       '/health': { target: 'http://localhost:5000', changeOrigin: true },

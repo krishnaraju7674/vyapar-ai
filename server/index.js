@@ -2,7 +2,10 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const mongoose = require("mongoose");
-require("dotenv").config();
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
 const authRoutes = require("./routes/auth");
 const analyzeRoutes = require("./routes/analyze");
@@ -25,12 +28,15 @@ app.get("/health", (req, res) => {
   res.json({ status: "healthy" });
 });
 
-// Serve built client in production
+// Serve built client if dist exists (local production)
 const clientDist = path.join(__dirname, "..", "client", "dist");
-app.use(express.static(clientDist));
-app.get("*", (req, res) => {
-  res.sendFile(path.join(clientDist, "index.html"));
-});
+const fs = require("fs");
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(clientDist, "index.html"));
+  });
+}
 
 // Connect to MongoDB
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/vyapar-ai";
@@ -43,7 +49,11 @@ mongoose
     console.warn("MongoDB connection failed (running in offline/in-memory mode):", err.message);
   });
 
-// Always Start Server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Start server only when not in Vercel serverless
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
