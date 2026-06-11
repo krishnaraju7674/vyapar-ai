@@ -119,6 +119,18 @@ export default function RuixenMoonChat({ onAnalyze, isLoading }: RuixenMoonChatP
               adjustHeight();
             }}
             onKeyDown={handleKeyDown}
+            onPaste={(e) => {
+              const items = e.clipboardData?.items;
+              if (items) {
+                for (let i = 0; i < items.length; i++) {
+                  if (items[i].type.startsWith("image/")) {
+                    e.preventDefault();
+                    alert("Image pasting is not supported. Please describe your business idea in text.");
+                    return;
+                  }
+                }
+              }
+            }}
             placeholder="Type your startup or business idea here (e.g. Kirana organic grocery delivery in Pune)..."
             className={cn(
               "w-full px-4 py-3.5 resize-none border-none",
@@ -132,14 +144,21 @@ export default function RuixenMoonChat({ onAnalyze, isLoading }: RuixenMoonChatP
 
           {/* Footer Buttons */}
           <div className="flex items-center justify-between p-3 border-t border-neutral-800/50">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-neutral-400 hover:text-white hover:bg-neutral-800"
-              disabled={isLoading}
-            >
-              <Paperclip className="w-4 h-4" />
-            </Button>
+            <div className="relative group">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => alert("Image/file upload is not supported yet. Vyapar AI currently accepts text descriptions only.")}
+                className="text-neutral-400 hover:text-white hover:bg-neutral-800"
+                disabled={isLoading}
+                type="button"
+              >
+                <Paperclip className="w-4 h-4" />
+              </Button>
+              <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-neutral-900 text-neutral-300 text-[10px] px-2 py-1 rounded whitespace-nowrap border border-neutral-800">
+                Attach (text only)
+              </div>
+            </div>
 
             <div className="flex items-center gap-2">
               <Button
